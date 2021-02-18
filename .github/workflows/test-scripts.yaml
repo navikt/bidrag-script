@@ -1,0 +1,17 @@
+name: test scripts
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  test_produceCucumberShell:
+    name: test produceCucumberShell.kts
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: fwilhe2/setup-kotlin@0.2.0
+      - run: kotlinc -script src/kotlin/produceCucumberShell.kts false test maven:3.6.3 brukewr json/in.json appen
+      - run: ls -al $GITHUB_WORKSPACE
+      - run: cat $GITHUB_WORKSPACE/execute-cucumber.sh
