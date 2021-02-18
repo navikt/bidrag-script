@@ -14,4 +14,11 @@ jobs:
       - uses: fwilhe2/setup-kotlin@0.2.0
       - run: kotlinc -script src/kotlin/produceCucumberShell.kts false test maven:3.6.3 brukewr json/in.json appen
       - run: ls -al $GITHUB_WORKSPACE
-      - run: cat $GITHUB_WORKSPACE/execute-cucumber.sh
+      - run: |
+          CUCE_FILE=$GITHUB_WORKSPACE/execute-cucumber.sh
+
+          if test -f "$CUCE_FILE"; then
+            cat $CUCE_FILE
+          else
+            exit 1
+          fi
