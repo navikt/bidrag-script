@@ -6,19 +6,21 @@ var mavenImage = "not set"
 var userName = "not set"
 var relativeJsonPath = "not set"
 var relativeAppPath = "not set"
+var cucumberShellName = "not set"
 var cucumberTag = "not @ignored"
 
-if (args.size < 4) {
+if (args.size < 5) {
     throw IllegalStateException(
         """
         Error!
-        Usage: produceCucumberShell.kts true/false mvn:image json/integrationInput.json apps bidrag-app
+        Usage: produceCucumberShell.kts true/false mvn:image json/integrationInput.json apps bidrag-app execute-cucumber.sh
           1) if failure in the integration tests should produce build error, ex [true] or [false]
           2) the maven command to run, ex [test]
           3) the docker maven image to run, ex [maven:3.6.3-openjdk-15]
           4) the nav user running the integration tests, ex [j104364]
           5) the relative path to input json file, ex [json/integrationInput.json]
-          6) the optional cucumber tag to run, will default to "not @ignored"
+          6) the name of the file to produce, ex [execute-cucumber.sh]
+          7) the optional cucumber tag to run, will default to "not @ignored"
           ---------
         """.trimIndent()
     )
@@ -35,9 +37,10 @@ mavenGoal = args[1]
 mavenImage = args[2]
 userName = args[3]
 relativeJsonPath = args[4]
+cucumberShellName = args[5]
 
-if (args.size > 5) {
-    cucumberTag = "@${args[5]} and not @ignored"
+if (args.size > 6) {
+    cucumberTag = "@${args[6]} and not @ignored"
 }
 
 var dockerEnvironment = "-e CUCUMBER_FILTER_TAGS=\"$cucumberTag\""
@@ -53,6 +56,6 @@ println(
 )
 
 val workspace = System.getenv()["GITHUB_WORKSPACE"] ?: throw IllegalStateException("Unable to fetch GITHUB_WORKSPACE")
-val executeCucumberShell = File(workspace, "execute-cucumber.sh")
+val executeCucumberShell = File(workspace, cucumberShellName)
 executeCucumberShell.writeText("docker run $dockerArguments $mavenGoal $mavenArguments\n", Charsets.UTF_8)
 println("created $executeCucumberShell")
