@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: fwilhe2/setup-kotlin@0.2.0
-      - run: kotlinc -script src/kotlin/produceCucumberShell.kts false test maven:3.6.3 brukewr json/in.json appen
+      - run: kotlinc -script src/kotlin/produceCucumberShell.kts false test maven:3.6.3 brukewr json/in.json execute-cucumber.sh appen
       - run: ls -al $GITHUB_WORKSPACE
       - run: |
           CUCE_FILE=$GITHUB_WORKSPACE/execute-cucumber.sh
