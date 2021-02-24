@@ -1584,6 +1584,12 @@ async function run() {
     const generator = core.getInput('generator')
     const generated_shell = core.getInput('generated_shell')
 
+    core.info(
+        "Arguments to index.js: " + [
+          delimiter, delimeted_arguments, generator, generated_shell
+        ]
+    )
+
     // Generate shell script with generate.sh (uses generator)
     await exec.exec(
         `${__dirname}/../generate.sh`,
