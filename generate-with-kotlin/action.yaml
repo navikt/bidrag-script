@@ -1,0 +1,25 @@
+name: generate shell script with kotlin
+description:
+  "Generates a shell script by running a kotlin script from navikt/bidrag-scripts.
+  Expects:
+    - that the kotlin script are found in the src/kotlin path of this repository
+    - that generated file are found in RUNNER_WORKSPACE
+    - if the generated scripts needs arguments, then 2 input argumentss on the kotlin script are expected
+      1) delimeter (ex: ,)
+      2) string of arguments separated by delimeter (ex: arg1,arg2,...,argx)"
+runs:
+  using: node12
+  main: dist/index.js
+inputs:
+  delimiter:
+    description: a delimter to use for the arguments provided to the kotlin script
+    required: false
+  delimeted_arguments:
+    description: all arguments to use separated by the delimiter
+    required: false
+  generator:
+    description: the name of the kotlin script located under src/kotlin
+    required: true
+outputs:
+  path_to_generated_shell:
+    description: the filepath to the generated shell
