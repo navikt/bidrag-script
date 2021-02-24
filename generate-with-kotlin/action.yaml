@@ -20,6 +20,9 @@ inputs:
   generator:
     description: the name of the kotlin script located under src/kotlin
     required: true
+  generated_shell:
+    description: the name of the generated shell script
+    required: true
 outputs:
   path_to_generated_shell:
     description: the filepath to the generated shell
