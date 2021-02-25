@@ -5,7 +5,7 @@ set -e
 #
 # Følgende skjer i dette skriptet
 # - kloner ut bidrag-script (enten branch som tilsvarer branch som bygges, eller main branch)
-# - kaller scriptet med kotlin (ie: kotlinc -script src/kotlin/<arg1: script navn> <arg2: delimeter> <arg3:argliste separert med delimeter):
+# - kaller scriptet med kotlin (ie: kotlinc -script src/kotlin/<arg1: script navn> <arg2: delimiter> <arg3:argliste separert med delimiter):
 # - lager output av av fila som er generert (RUNNER_WORKSPACE/<arg4: generert script>)
 #
 ############################################

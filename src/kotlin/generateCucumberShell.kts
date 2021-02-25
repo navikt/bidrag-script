@@ -4,9 +4,9 @@ if (args.size < 2) {
     throw IllegalStateException(
         """
             ERROR!
-            Usage: produceCucumberShell.kts [delimeter] [args]
-              1) the delimeter which separates each argument  - ex: ,
-              2) all the arguments separated by the delimeter - ex: arg1,arg2,arg3,arg4,arg5
+            Usage: produceCucumberShell.kts [delimiter] [args]
+              1) the delimiter which separates each argument  - ex: ,
+              2) all the arguments separated by the delimiter - ex: arg1,arg2,arg3,arg4,arg5
               ---------
               -  args: ${args.joinToString(" - ")}
               ---------
@@ -14,8 +14,8 @@ if (args.size < 2) {
     )
 }
 
-val delimeter = args[0]
-val inputs = args[1].split(delimeter)
+val delimiter = args[0]
+val inputs = args[1].split(delimiter)
 
 if (inputs.size < 5) {
     throw java.lang.IllegalStateException(
