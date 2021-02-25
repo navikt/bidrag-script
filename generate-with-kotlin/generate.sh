@@ -10,7 +10,7 @@ set -e
 #
 ############################################
 
-if [[ $# > 2 ]]; then
+if [[ $# < 2 ]]; then
   echo ::error:: "At least two arguments from the action is expected, name of the generator (kotlin script) and name of the generated shell script"
   echo ::error:: "Args: $@"
   exit 1

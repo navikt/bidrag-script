@@ -31,7 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test_generateCucumberShell:
-    name: test produceCucumberShell.kts
+    name: test generateCucumberShell.kts
     runs-on: self-hosted
     needs: build
 
