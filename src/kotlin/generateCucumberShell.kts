@@ -8,12 +8,14 @@ if (args.size < 2) {
               1) the delimeter which separates each argument  - ex: ,
               2) all the arguments separated by the delimeter - ex: arg1,arg2,arg3,arg4,arg5
               ---------
+              -  args: ${args.joinToString(" - ")}
+              ---------
         """.trimIndent()
     )
 }
 
 val delimeter = args[0]
-val inputs = args[1].split(",")
+val inputs = args[1].split(delimeter)
 
 if (inputs.size < 5) {
     throw java.lang.IllegalStateException(
@@ -26,9 +28,14 @@ if (inputs.size < 5) {
               4) the relative path to input json file, ex [json/integrationInput.json]
               5) the name of the file to produce, ex [execute-cucumber.sh]
               6) the optional cucumber tag to run, will default to "not @ignored"
+              ---------
+              -  args: ${args.joinToString(" - ")}
+              ---------
         """.trimIndent()
     )
 }
+
+println("Using arguments: ${inputs.joinToString(" - ")}")
 
 val skipMavenFailures = if (inputs[0].toBoolean()) {
     " -Dmaven.test.failure.ignore=true"

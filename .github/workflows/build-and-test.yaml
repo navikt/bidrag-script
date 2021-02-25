@@ -42,8 +42,8 @@ jobs:
       - uses: navikt/bidrag-scripts/generate-with-kotlin@feature/action
         id: generator
         with:
-          delimiter: ","
-          delimited_arguments: false,test,bruker,json/in.json,execute-cucumber.sh,appen
+          delimiter: "%"
+          delimited_arguments: "false%test%bruker%json/in.json%execute-cucumber.sh%appen"
           generator: generateCucumberShell.kts
           generated_shell: execute-cucumber.sh
       - run: cat ${{ steps.generator.outputs.path_to_generated_shell }}
