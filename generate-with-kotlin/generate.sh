@@ -24,7 +24,7 @@ INPUT_GENERATED_SHELL=$4
 
 cd "$RUNNER_WORKSPACE" || exit 1
 
-if [ ! -d bidrag-scripts ]; then
+if [ ! -d bidrag-scripts/.git ]; then
   BRANCH="${GITHUB_REF#refs/heads/}"
 
   if [[ "$BRANCH" != "main" ]]; then
