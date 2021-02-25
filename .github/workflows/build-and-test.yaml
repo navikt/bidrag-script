@@ -55,3 +55,10 @@ jobs:
           else
             exit 1
           fi
+      - name: Remove files from workspace
+        run: |
+          cd $RUNNER_WORKSPACE
+          echo deleting files
+          ls -al
+          sudo rm -rf *
+        if: ${{ always() }}
