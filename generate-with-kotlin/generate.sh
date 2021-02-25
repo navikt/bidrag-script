@@ -23,23 +23,28 @@ INPUT_DELIMITED_ARGS=$3
 INPUT_GENERATED_SHELL=$4
 
 cd "$RUNNER_WORKSPACE" || exit 1
-sudo rm -rf "bidrag-scripts"
-BRANCH="${GITHUB_REF#refs/heads/}"
 
-if [[ "$BRANCH" != "main" ]]; then
-  FEATURE_BRANCH=$BRANCH
-  IS_SCRIPT_CHANGE=$(git ls-remote --heads $(echo "https://github.com/navikt/bidrag-scripts $FEATURE_BRANCH" | sed "s/'//g") | wc -l)
+if [ ! -d bidrag-scripts ]; then
+  BRANCH="${GITHUB_REF#refs/heads/}"
 
-  if [[ $IS_SCRIPT_CHANGE -eq 1 ]]; then
-    echo "Using feature branch: $FEATURE_BRANCH, cloning to $PWD"
-    git clone --depth 1 --branch=$FEATURE_BRANCH https://github.com/navikt/bidrag-scripts
+  if [[ "$BRANCH" != "main" ]]; then
+    FEATURE_BRANCH=$BRANCH
+    IS_SCRIPT_CHANGE=$(git ls-remote --heads $(echo "https://github.com/navikt/bidrag-scripts $FEATURE_BRANCH" | sed "s/'//g") | wc -l)
+
+    if [[ $IS_SCRIPT_CHANGE -eq 1 ]]; then
+      echo "Using feature branch: $FEATURE_BRANCH, cloning to $PWD"
+      git clone --depth 1 --branch=$FEATURE_BRANCH https://github.com/navikt/bidrag-scripts
+    else
+      echo "Using /refs/heads/main, cloning to $PWD"
+      git clone --depth 1 https://github.com/navikt/bidrag-scripts
+    fi
   else
     echo "Using /refs/heads/main, cloning to $PWD"
     git clone --depth 1 https://github.com/navikt/bidrag-scripts
   fi
 else
-  echo "Using /refs/heads/main, cloning to $PWD"
-  git clone --depth 1 https://github.com/navikt/bidrag-scripts
+  cd bidrag-scripts || exit 1
+  git pull
 fi
 
 if [ -z $RUNNER_WORKSPACE ]; then
@@ -48,10 +53,10 @@ fi
 
 KOTLIN_SCRIPT_SRC=$RUNNER_WORKSPACE/bidrag-scripts/src/kotlin/$INPUT_KOTLIN_SCRIPT
 
-if [ -z $INPUT_DELIMTER ]; then
-  kotlinc -script $KOTLIN_SCRIPT
+if [ -z $INPUT_DELIMITER ]; then
+  kotlinc -script $KOTLIN_SCRIPT_SRC
 else
-  kotlinc -script $KOTLIN_SCRIPT $INPUT_DELIMITER $INPUT_DELIMITED_ARGS
+  kotlinc -script $KOTLIN_SCRIPT_SRC $INPUT_DELIMITER $INPUT_DELIMITED_ARGS
 fi
 
 GENERATED_SHELL_FILE="$RUNNER_WORKSPACE/$INPUT_GENERATED_SHELL"
