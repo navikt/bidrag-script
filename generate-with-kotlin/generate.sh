@@ -66,4 +66,5 @@ if [ ! -f $GENERATED_SHELL_FILE ]; then
   exit 1
 fi
 
+chmod +x $GENERATED_SHELL_FILE
 echo ::set-output name=path_to_generated_shell::"$GENERATED_SHELL_FILE"
