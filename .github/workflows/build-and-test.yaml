@@ -39,7 +39,7 @@ jobs:
       - run: |
           GITHUB_REF=${{ github.ref }}
           echo BRANCH=${GITHUB_REF#"refs/heads/"} >> $GITHUB_ENV
-      - uses: navikt/bidrag-scripts/generate-with-kotlin@feature/action
+      - uses: navikt/bidrag-scripts/generate-with-kotlin@main
         id: generator
         with:
           delimiter: "%"
