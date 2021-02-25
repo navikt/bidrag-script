@@ -11,6 +11,7 @@ set -e
 ############################################
 
 if [[ $# < 2 ]]; then
+  echo ::error:: "Usage: generate.sh <kotlin script> <delimiter for kotlin script> <delimited argument string for kotlin script> <generated shell>"
   echo ::error:: "At least two arguments from the action is expected, name of the generator (kotlin script) and name of the generated shell script"
   echo ::error:: "Args: $@"
   exit 1
@@ -41,10 +42,16 @@ else
   git clone --depth 1 https://github.com/navikt/bidrag-scripts
 fi
 
+if [ -z $RUNNER_WORKSPACE ]; then
+  echo ::error:: "No defined workspace for the github runner"
+fi
+
+KOTLIN_SCRIPT_SRC=$RUNNER_WORKSPACE/bidrag-scripts/src/kotlin/$INPUT_KOTLIN_SCRIPT
+
 if [ -z $INPUT_DELIMTER ]; then
-  kotlinc -script src/kotlin/$INPUT_KOTLIN_SCRIPT
+  kotlinc -script $KOTLIN_SCRIPT
 else
-  kotlinc -script src/kotlin/$INPUT_KOTLIN_SCRIPT $INPUT_DELIMITER $INPUT_DELIMITED_ARGS
+  kotlinc -script $KOTLIN_SCRIPT $INPUT_DELIMITER $INPUT_DELIMITED_ARGS
 fi
 
 GENERATED_SHELL_FILE="$RUNNER_WORKSPACE/$INPUT_GENERATED_SHELL"
