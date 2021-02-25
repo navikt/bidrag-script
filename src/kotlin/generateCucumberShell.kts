@@ -48,26 +48,50 @@ val mavenGoal = inputs[1]
 val userName = inputs[2]
 val relativeJsonPath = inputs[3]
 val cucumberShellName = inputs[4]
+val optionalArguments: MutableMap<String, String> = HashMap()
 
-val cucumberTag = if (inputs.size > 5) {
-    "@${inputs[5]} and not @ignored"
+inputs.filter { it.contains( '=') }.forEach {
+    println("splitting $it by '='")
+
+    val key = it.split("=")[0]
+    val value = it.split("=")[1]
+    optionalArguments[key] = value
+}
+
+println("optional arguments - $optionalArguments")
+
+val cucumberTag = if (optionalArguments.containsKey("tag")) {
+    "@${optionalArguments["tag"]} and not @ignored"
 } else {
     "not @ignored"
 }
 
-var envCucumberFilterTags = "CUCUMBER_FILTER_TAGS=\"$cucumberTag\""
-var mavenArguments = "-e -DUSERNAME=$userName -DINTEGRATION_INPUT=$relativeJsonPath$skipMavenFailures"
-var authentication = "-DUSER_AUTH=\$USER_AUTHENTICATION -DTEST_AUTH=\$TEST_USER_AUTHENTICATION -DPIP_AUTH=\$PIP_USER_AUTHENTICATION"
+val envCucumberFilterTags = "CUCUMBER_FILTER_TAGS=\"$cucumberTag\""
+val mavenArguments = "-e -DUSERNAME=$userName -DINTEGRATION_INPUT=$relativeJsonPath$skipMavenFailures"
+val authentication = "-DUSER_AUTH=\$USER_AUTHENTICATION -DTEST_AUTH=\$TEST_USER_AUTHENTICATION -DPIP_AUTH=\$PIP_USER_AUTHENTICATION"
+val optionalMvnGoal = if (optionalArguments.containsKey("opt.goal")) {
+    "mvn ${optionalArguments["opt.goal"]}"
+} else {
+    ""
+}
 
 println(
     """
-      environment: $envCucumberFilterTags
-      maven args : $mavenGoal $mavenArguments $authentication
+      environment  : $envCucumberFilterTags
+      maven args   : $mavenGoal $mavenArguments $authentication
+      optional goal: $optionalMvnGoal 
     """.trimIndent()
 )
 
 val workspace = System.getenv()["RUNNER_WORKSPACE"] ?: throw IllegalStateException("Unable to fetch RUNNER_WORKSPACE")
 val executeCucumberShell = File(workspace, cucumberShellName)
-executeCucumberShell.writeText("$envCucumberFilterTags\nmvn $mavenGoal $mavenArguments $authentication\n", Charsets.UTF_8)
+val shellContent =
+    """
+      $envCucumberFilterTags
+      mvn $mavenGoal $mavenArguments $authentication
+      $optionalMvnGoal
+    """.trimIndent() + "\n"
+
+executeCucumberShell.writeText(shellContent, Charsets.UTF_8)
 
 println("created $executeCucumberShell")
