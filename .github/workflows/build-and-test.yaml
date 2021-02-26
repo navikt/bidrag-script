@@ -41,7 +41,7 @@ jobs:
         id: generator
         with:
           delimiter: "%"
-          delimited_arguments: "true%test%bruker%json/in.json%execute-cucumber.sh%appen%tag=bidrag-dokument%opt.goal=another-mvn-command"
+          delimited_arguments: "true%test%bruker%json/in.json%execute-cucumber.sh%tag=bidrag-dokument%opt.goal=another-mvn-command"
           generator: generateCucumberShell.kts
           generated_shell: execute-cucumber.sh
       - run: cat ${{ steps.generator.outputs.path_to_generated_shell }}

@@ -23,11 +23,13 @@ if (inputs.size < 5) {
             ERROR by arguments separated by delimter (${args[0]}):
             expected args: true/false test json/integrationInput.json apps bidrag-app execute-cucumber.sh           
               1) if failure in the integration tests should produce build error, ex [true] or [false]
-              2) the maven command to run, ex [test]
+              2) the maven goal to run, ex [test]
               3) the nav user running the integration tests, ex [j104364]
               4) the relative path to input json file, ex [json/integrationInput.json]
               5) the name of the file to produce, ex [execute-cucumber.sh]
-              6) the optional cucumber tag to run, will default to "not @ignored"
+              6) optional commands: 
+                 - tag=<cucumber tag to run (will default to "not @ignored")>,
+                 - opt.goal=<an optional goal to perform after running the cucumber tests>
               ---------
               -  args: ${args.joinToString(" - ")}
               ---------
