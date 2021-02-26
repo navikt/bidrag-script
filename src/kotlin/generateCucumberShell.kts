@@ -68,7 +68,7 @@ val cucumberTag = if (optionalArguments.containsKey("tag")) {
     "not @ignored"
 }
 
-val envCucumberFilterTags = "CUCUMBER_FILTER_TAGS=\"$cucumberTag\""
+val envCucumberFilterTags = "export CUCUMBER_FILTER_TAGS=\"$cucumberTag\""
 val mavenArguments = "-e -DUSERNAME=$userName -DINTEGRATION_INPUT=$relativeJsonPath$skipMavenFailures"
 val authentication = "-DUSER_AUTH=\$USER_AUTHENTICATION -DTEST_AUTH=\$TEST_USER_AUTHENTICATION -DPIP_AUTH=\$PIP_USER_AUTHENTICATION"
 val optionalMvnGoal = if (optionalArguments.containsKey("opt.goal")) {
