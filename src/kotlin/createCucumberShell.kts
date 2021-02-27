@@ -1,8 +1,8 @@
 import java.io.File
 
-val allArgs = args.joinToString(" - ")
+val allArgs = args.joinToString(" ")
 
-if (args.size < 2) {
+if (args.size < 1) {
     throw IllegalStateException(
         """
             ERROR!
@@ -36,13 +36,13 @@ if (commands.size < 5) {
         """
            ERROR! Not all required arguments are present!!!
             example of expected arguments           
-              - $cucumber_tag=<cucumber tag> optional argument  : cucumber tag to run with "along with not @ignore", (will default to "not @ignored")>,
-              - $do_not_fail=true/false                         : if failure in the integration tests, produce build error, ex [true] or [false] if not
-              - $final_shell_file=execute-cucumber              : the name of the file to produce, ex [execute-cucumber.sh]
-              - $maven_goal=test                                : the maven goal to run, ex [test]
-              - $optional_maven_goal=<goal>   optional argument : an optional goal to perform after running the cucumber tests
-              - $relative_json_path=json/integrationInput.json  : the relative path to input json file, ex [json/integrationInput.json]
-              - $user=j104364                                   : the nav user running the integration tests, ex [j104364]
+              - $cucumber_tag=<cucumber tag> (optional)        : cucumber tag to run with "along with not @ignore", (will default to "not @ignored")>,
+              - $do_not_fail=true/false                        : if failure in the integration tests, produce build error, ex [true] or [false] if not
+              - $final_shell_file=execute-cucumber.sh          : the name of the file to produce, ex [execute-cucumber.sh]
+              - $maven_goal=test                               : the maven goal to run, ex [test]
+              - $optional_maven_goal=<goal> (optional)         : an optional goal to perform after running the cucumber tests
+              - $relative_json_path=json/integrationInput.json : the relative path to input json file, ex [json/integrationInput.json]
+              - $user=j104364                                  : the nav user running the integration tests, ex [j104364]
               ---------
               -  args: $allArgs
               ---------
