@@ -7,13 +7,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: build generic generation with ncc
+    name: build script actions with ncc
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1.4.4
         with:
           node-version: '13.x'
       - run: npm i -g @zeit/ncc
+      - name: Install create-cucumber-shell
+        uses: navikt/bidrag-node/build-with-ncc@v1
+        with:
+          artifact_folder: bidrag-scripts/create-cucumber-shell
       - name: Install generate-with-kotlin
         uses: navikt/bidrag-node/build-with-ncc@v1
         with:
