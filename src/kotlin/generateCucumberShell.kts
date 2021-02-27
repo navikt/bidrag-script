@@ -4,7 +4,7 @@ if (args.size < 2) {
     throw IllegalStateException(
         """
             ERROR!
-            Usage: produceCucumberShell.kts [delimiter] [args]
+            Usage: generateCucumberShell.kts [delimiter] [args]
               1) the delimiter which separates each argument  - ex: ,
               2) all the arguments separated by the delimiter - ex: arg1,arg2,arg3,arg4,arg5
               ---------

@@ -1,12 +1,12 @@
 import java.io.File
 
-val allArgs = args.joinToString(",").replace("',", " - ")
+val allArgs = args.joinToString(" - ")
 
 if (args.size < 2) {
     throw IllegalStateException(
         """
             ERROR!
-            Usage: produceCucumberShell.kts [mapped args]
+            Usage: createCucumberShell.kts [mapped args]
               - all the arguments to this script as key=value - ex: <arg1=value1 arg2=value2 arg3=value3 ... argX=valueX>
               ---------
               - args: $allArgs
