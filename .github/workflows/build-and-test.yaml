@@ -68,7 +68,7 @@ jobs:
     needs: build
 
     steps:
-      - uses: navikt/bidrag-scripts/create-cucumber-shell@feature/create
+      - uses: navikt/bidrag-scripts/create-cucumber-shell@main
         id: creator
         with:
           cucumber_tag: bidrag-dokument
