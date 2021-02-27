@@ -23,6 +23,7 @@ inputs
         commands[key] = value
     }
 
+val cucumber_github_project = "cucumber_github_project"
 val cucumber_tag = "cucumber_tag"
 val do_not_fail = "do_not_fail"
 val final_shell_file = "final_shell_file"
@@ -31,32 +32,18 @@ val optional_maven_goal = "optional_maven_goal"
 var relative_json_path = "relative_json_path"
 val user = "user"
 
-if (commands.size < 5) {
-    throw java.lang.IllegalStateException(
-        """
-           ERROR! Not all required arguments are present!!!
-            example of expected arguments           
-              - $cucumber_tag=<cucumber tag> (optional)        : cucumber tag to run with "along with not @ignore", (will default to "not @ignored")>,
-              - $do_not_fail=true/false                        : if failure in the integration tests, produce build error, ex [true] or [false] if not
-              - $final_shell_file=execute-cucumber.sh          : the name of the file to produce, ex [execute-cucumber.sh]
-              - $maven_goal=test                               : the maven goal to run, ex [test]
-              - $optional_maven_goal=<goal> (optional)         : an optional goal to perform after running the cucumber tests
-              - $relative_json_path=json/integrationInput.json : the relative path to input json file, ex [json/integrationInput.json]
-              - $user=j104364                                  : the nav user running the integration tests, ex [j104364]
-              ---------
-              -  args: $allArgs
-              ---------
-        """.trimIndent()
-    )
+if (commands.size < 6) {
+    throw exception("Example of expected arguments are")
 }
 
 println("Using arguments: $allArgs")
 
-val cucumberShellName = commands[final_shell_file] ?: throw IllegalArgumentException("missing required argument: $final_shell_file, args: $allArgs")
-val suppressFailures = commands[do_not_fail]?.toBoolean() ?: throw IllegalArgumentException("missing required parameter: $do_not_fail, args $allArgs")
-val jsonPath = commands[relative_json_path] ?: throw IllegalArgumentException("missing required argument: $relative_json_path, args: $allArgs")
-val runMavenGoal = commands[maven_goal] ?: throw IllegalArgumentException("missing required argument: $maven_goal, args: $allArgs")
-val userName = commands[user] ?: throw IllegalArgumentException("missing required argument: $user, args: $allArgs")
+val cucumberGithubProcect = commands[cucumber_github_project] ?: throw exception("Missing required argument: $cucumber_github_project!")
+val cucumberShellName = commands[final_shell_file] ?: throw exception("Missing required argument: $final_shell_file!")
+val suppressFailures = commands[do_not_fail]?.toBoolean() ?: throw exception("Missing required argument: $do_not_fail, args $allArgs")
+val jsonPath = commands[relative_json_path] ?: throw exception("Missing required argument: $relative_json_path, args: $allArgs")
+val runMavenGoal = commands[maven_goal] ?: throw exception("Missing required argument: $maven_goal, args: $allArgs")
+val userName = commands[user] ?: throw exception("Missing required argument: $user, args: $allArgs")
 
 val cucumberTags = if (commands.containsKey(cucumber_tag)) {
     "@${commands[cucumber_tag]} and not @ignored"
@@ -83,6 +70,7 @@ val optionalMvnGoal = if (commands.containsKey(optional_maven_goal)) {
 val workspace = System.getenv()["RUNNER_WORKSPACE"] ?: throw IllegalStateException("Unable to fetch RUNNER_WORKSPACE")
 val executeCucumberShell = File(workspace, cucumberShellName)
 val shellContent = """
+      cd $workspace/$cucumberGithubProcect || exit 1
       $envCucumberFilterTags
       mvn $runMavenGoal $mavenArguments $authentication
       $optionalMvnGoal
@@ -91,3 +79,21 @@ val shellContent = """
 println(shellContent.trim())
 executeCucumberShell.writeText(shellContent, Charsets.UTF_8)
 println("created $executeCucumberShell")
+
+fun exception(detailedArgumentMessage: String) = IllegalArgumentException(fetchErrorMsg(detailedArgumentMessage))
+
+fun fetchErrorMsg(detailedArgumentMsg: String) = """
+           ERROR!
+           $detailedArgumentMsg
+              - $cucumber_github_project=<name of project>     : the name of the github project where the cucumber tests to run
+              - $cucumber_tag=<cucumber tag> (optional)        : cucumber tag to run with "along with not @ignore", (will default to "not @ignored")>,
+              - $do_not_fail=true/false                        : if failure in the integration tests, produce build error, ex [true] or [false] if not
+              - $final_shell_file=execute-cucumber.sh          : the name of the file to produce, ex [execute-cucumber.sh]
+              - $maven_goal=test                               : the maven goal to run, ex [test]
+              - $optional_maven_goal=<goal> (optional)         : an optional goal to perform after running the cucumber tests
+              - $relative_json_path=json/integrationInput.json : the relative path to input json file, ex [json/integrationInput.json]
+              - $user=j104364                                  : the nav user running the integration tests, ex [j104364]
+              ---------
+              -  args: $allArgs
+              ---------
+        """.trimIndent()

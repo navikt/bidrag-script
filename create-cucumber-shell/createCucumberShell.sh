@@ -59,4 +59,4 @@ if [ ! -f $CREATED_SHELL_FILE ]; then
 fi
 
 chmod +x $CREATED_SHELL_FILE
-echo ::set-output name=createted_shell::"$CREATED_SHELL_FILE"
+echo ::set-output name=created_shell::"$CREATED_SHELL_FILE"
