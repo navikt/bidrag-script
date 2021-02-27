@@ -1,6 +1,6 @@
 import java.io.File
 
-val allArgs = args.joinToString(",").replace(',', ' ')
+val allArgs = args.joinToString(",").replace("',", " - ")
 
 if (args.size < 2) {
     throw IllegalStateException(
