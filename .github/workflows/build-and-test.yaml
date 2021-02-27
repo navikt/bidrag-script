@@ -7,13 +7,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: build generic generation with ncc
+    name: build script actions with ncc
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1.4.4
         with:
           node-version: '13.x'
       - run: npm i -g @zeit/ncc
+      - name: Install create-cucumber-shell
+        uses: navikt/bidrag-node/build-with-ncc@v1
+        with:
+          artifact_folder: bidrag-scripts/create-cucumber-shell
       - name: Install generate-with-kotlin
         uses: navikt/bidrag-node/build-with-ncc@v1
         with:
@@ -34,9 +38,6 @@ jobs:
     needs: build
 
     steps:
-      - run: |
-          GITHUB_REF=${{ github.ref }}
-          echo BRANCH=${GITHUB_REF#"refs/heads/"} >> $GITHUB_ENV
       - uses: navikt/bidrag-scripts/generate-with-kotlin@main
         id: generator
         with:
@@ -47,6 +48,33 @@ jobs:
       - run: cat ${{ steps.generator.outputs.path_to_generated_shell }}
       - run: |
           SHELL_FILE=${{ steps.generator.outputs.path_to_generated_shell }}
+
+          if test -f "$SHELL_FILE"; then
+            cat $SHELL_FILE
+          else
+            exit 1
+          fi
+      - name: Remove files from workspace
+        run: |
+          cd $RUNNER_WORKSPACE
+          echo deleting files
+          ls -al
+          sudo rm -rf *
+        if: ${{ always() }}
+
+  test_createCucumberShell:
+    name: test createCucumberShell.kts
+    runs-on: self-hosted
+    needs: build
+
+    steps:
+      - uses: navikt/bidrag-scripts/create-cucumber-shell@feature/create
+        id: creator
+        with:
+          cucumber_tag: bidrag-dokument
+          user: j104364
+      - run: |
+          SHELL_FILE=${{ steps.creator.outputs.created_shell }}
 
           if test -f "$SHELL_FILE"; then
             cat $SHELL_FILE

@@ -4,7 +4,7 @@ if (args.size < 2) {
     throw IllegalStateException(
         """
             ERROR!
-            Usage: produceCucumberShell.kts [delimiter] [args]
+            Usage: generateCucumberShell.kts [delimiter] [args]
               1) the delimiter which separates each argument  - ex: ,
               2) all the arguments separated by the delimiter - ex: arg1,arg2,arg3,arg4,arg5
               ---------
@@ -52,13 +52,15 @@ val relativeJsonPath = inputs[3]
 val cucumberShellName = inputs[4]
 val optionalArguments: MutableMap<String, String> = HashMap()
 
-inputs.filter { it.contains( '=') }.forEach {
-    println("splitting $it by '='")
+inputs
+    .filter { it.contains('=') }
+    .filter { !it.endsWith('=') }
+    .forEach {
+        val key = it.split("=")[0]
+        val value = it.split("=")[1]
 
-    val key = it.split("=")[0]
-    val value = it.split("=")[1]
-    optionalArguments[key] = value
-}
+        optionalArguments[key] = value
+    }
 
 println("optional arguments - $optionalArguments")
 
