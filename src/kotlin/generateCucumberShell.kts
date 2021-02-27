@@ -52,13 +52,15 @@ val relativeJsonPath = inputs[3]
 val cucumberShellName = inputs[4]
 val optionalArguments: MutableMap<String, String> = HashMap()
 
-inputs.filter { it.contains( '=') }.forEach {
-    println("splitting $it by '='")
+inputs
+    .filter { it.contains('=') }
+    .filter { !it.endsWith('=') }
+    .forEach {
+        val key = it.split("=")[0]
+        val value = it.split("=")[1]
 
-    val key = it.split("=")[0]
-    val value = it.split("=")[1]
-    optionalArguments[key] = value
-}
+        optionalArguments[key] = value
+    }
 
 println("optional arguments - $optionalArguments")
 

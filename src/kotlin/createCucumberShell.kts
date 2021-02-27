@@ -14,11 +14,14 @@ val allArgs = args.joinToString(",")
 val inputs = allArgs.replace(',', ' ').split(Regex(" "))
 val commands: MutableMap<String, String> = HashMap()
 
-inputs.filter { it.contains('=') }.forEach {
-    val key = it.split("=")[0]
-    val value = it.split("=")[1]
-    commands[key] = value
-}
+inputs
+    .filter { it.contains('=') }
+    .filter { !it.endsWith('=') }
+    .forEach {
+        val key = it.split("=")[0]
+        val value = it.split("=")[1]
+        commands[key] = value
+    }
 
 val cucumber_tag = "cucumber_tag"
 val do_not_fail = "do_not_fail"

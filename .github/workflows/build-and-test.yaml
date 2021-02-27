@@ -74,7 +74,7 @@ jobs:
           cucumber_tag: bidrag-dokument
           user: j104364
       - run: |
-          SHELL_FILE=${{ steps.generator.outputs.created_shell }}
+          SHELL_FILE=${{ steps.creator.outputs.created_shell }}
 
           if test -f "$SHELL_FILE"; then
             cat $SHELL_FILE

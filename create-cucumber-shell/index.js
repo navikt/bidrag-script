@@ -7,7 +7,7 @@ async function run() {
     const doNotFail = 'do_not_fail=' + core.getInput('do_not_fail');
     const githubProjectName = core.getInput('github_project_name');
     const finalShellFile = core.getInput('final_shell_file');
-    const finalShellFileAsMap = 'final_shell_file==' + finalShellFile;
+    const finalShellFileAsMap = 'final_shell_file=' + finalShellFile;
     const mavenGoal = 'maven_goal=' + core.getInput('maven_goal');
     const user = 'user=' + core.getInput('user');
 
