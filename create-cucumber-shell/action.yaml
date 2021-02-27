@@ -22,7 +22,7 @@ inputs:
     description: The cucumber integration test suite should not cause a workflow failure when tests have errors
     required: true
     default: "false"
-  final_shell_name:
+  final_shell_file:
     description: The name of the shell file created
     required: true
     default: execute-cucumber.sh

@@ -6,8 +6,8 @@ async function run() {
     const cucumberTag = 'cucumber_tag=' + core.getInput('cucumber_tag');
     const doNotFail = 'do_not_fail=' + core.getInput('do_not_fail');
     const githubProjectName = core.getInput('github_project_name');
-    const finalShellName = core.getInput('final_shell_name');
-    const finalShellNameAsMap = 'final_shell_name=' + finalShellName;
+    const finalShellFile = core.getInput('final_shell_file');
+    const finalShellFileAsMap = 'final_shell_file==' + finalShellFile;
     const mavenGoal = 'maven_goal=' + core.getInput('maven_goal');
     const user = 'user=' + core.getInput('user');
 
@@ -19,22 +19,19 @@ async function run() {
         'relative_json_path'
     );
 
-    const argumentsAsMapForKotlinAndForExtraArgsForShell = [
-      cucumberTag + ',' + doNotFail + ',' + finalShellNameAsMap + ','
+    const mappedAndSpecificArguments = [
+      cucumberTag + ',' + doNotFail + ',' + finalShellFileAsMap + ','
       + mavenGoal + ',' + optionalMavenGoal + ',' + relativeJsonPath + ','
       + user,
       githubProjectName,
-      finalShellName
+      finalShellFile
     ];
 
-    console.log(
-        "Arguments to shell script: "
-        + argumentsAsMapForKotlinAndForExtraArgsForShell
-    );
+    console.log("Arguments to shell script: " + mappedAndSpecificArguments);
 
-    // Run createCucumberShell.sh with all arguments (runs createCucumberShell.kts)
-    await exec.exec(`${__dirname}/../createCucumberShell.sh`,
-        argumentsAsMapForKotlinAndForExtraArgsForShell
+    // Run createCucumberShell.sh with mapped arguments as well as specific
+    await exec.exec(
+        `${__dirname}/../createCucumberShell.sh`, mappedAndSpecificArguments
     );
   } catch (error) {
     core.setFailed(error.message);

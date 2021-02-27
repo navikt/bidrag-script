@@ -1,23 +1,20 @@
 import java.io.File
 
-val allArgs = args.joinToString(" ")
-
-if (args.size < 1) {
+if (args.size == 0) {
     throw IllegalStateException(
         """
             ERROR!
             Usage: createCucumberShell.kts [mapped args]
               - all the arguments to this script as key=value - ex: <arg1=value1 arg2=value2 arg3=value3 ... argX=valueX>
-              ---------
-              - args: $allArgs
-              ---------
         """.trimIndent()
     )
 }
 
+val allArgs = args.joinToString(",")
+val inputs = allArgs.replace(',', ' ').split(Regex(" "))
 val commands: MutableMap<String, String> = HashMap()
 
-args.filter { it.contains('=') }.forEach {
+inputs.filter { it.contains('=') }.forEach {
     val key = it.split("=")[0]
     val value = it.split("=")[1]
     commands[key] = value
@@ -53,7 +50,7 @@ if (commands.size < 5) {
 println("Using arguments: $allArgs")
 
 val cucumberShellName = commands[final_shell_file] ?: throw IllegalArgumentException("missing required argument: $final_shell_file, args: $allArgs")
-val isSuppressFailures = commands[do_not_fail]?.toBoolean() ?: throw IllegalArgumentException("missing required parameter: $do_not_fail, args $allArgs")
+val suppressFailures = commands[do_not_fail]?.toBoolean() ?: throw IllegalArgumentException("missing required parameter: $do_not_fail, args $allArgs")
 val jsonPath = commands[relative_json_path] ?: throw IllegalArgumentException("missing required argument: $relative_json_path, args: $allArgs")
 val runMavenGoal = commands[maven_goal] ?: throw IllegalArgumentException("missing required argument: $maven_goal, args: $allArgs")
 val userName = commands[user] ?: throw IllegalArgumentException("missing required argument: $user, args: $allArgs")
@@ -64,7 +61,7 @@ val cucumberTags = if (commands.containsKey(cucumber_tag)) {
     "not @ignored"
 }
 
-val skipMavenFailures = if (isSuppressFailures) {
+val skipMavenFailures = if (suppressFailures) {
     " -Dmaven.test.failure.ignore=true"
 } else {
     println("Will fail if integration tests have errors!!!")
