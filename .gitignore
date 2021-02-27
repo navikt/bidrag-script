@@ -1,2 +1,3 @@
 .idea
-/generate-with-kotlin/node_modules/@actions/
+/generate-with-kotlin/node_modules/
+/create-cucumber-shell/node_modules/
