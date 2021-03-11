@@ -18,10 +18,6 @@ jobs:
         uses: navikt/bidrag-node/build-with-ncc@v1
         with:
           artifact_folder: bidrag-scripts/create-cucumber-shell
-      - name: Install generate-with-kotlin
-        uses: navikt/bidrag-node/build-with-ncc@v1
-        with:
-          artifact_folder: bidrag-scripts/generate-with-kotlin
       - name: Generate timestamp
         id: now
         run: echo ::set-output name=timestamp::$(date +"%Y-%m-%d:%T")
@@ -32,38 +28,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  test_generateCucumberShell:
-    name: test generateCucumberShell.kts
-    runs-on: self-hosted
-    needs: build
-
-    steps:
-      - uses: navikt/bidrag-scripts/generate-with-kotlin@main
-        id: generator
-        with:
-          delimiter: "%"
-          delimited_arguments: "true%test%bruker%json/in.json%execute-cucumber.sh%tag=bidrag-dokument%opt.goal=another-mvn-command"
-          generator: generateCucumberShell.kts
-          generated_shell: execute-cucumber.sh
-      - run: cat ${{ steps.generator.outputs.path_to_generated_shell }}
-      - run: |
-          SHELL_FILE=${{ steps.generator.outputs.path_to_generated_shell }}
-
-          if test -f "$SHELL_FILE"; then
-            cat $SHELL_FILE
-          else
-            exit 1
-          fi
-      - name: Remove files from workspace
-        run: |
-          cd $RUNNER_WORKSPACE
-          echo deleting files
-          ls -al
-          sudo rm -rf *
-        if: ${{ always() }}
-
   test_createCucumberShell:
-    name: test createCucumberShell.kts
+    name: test createCucumberShell.kts (via action)
     runs-on: self-hosted
     needs: build
 
@@ -81,6 +47,43 @@ jobs:
           else
             exit 1
           fi
+
+  test_copyCucumberReport:
+    name: test copyCucumberReport.kts
+    runs-on: self-hosted
+    needs: test_createCucumberShell
+
+    steps:
+      - name: create expectations and run script
+        run: |
+          cd ${RUNNER_WORKSPACE}
+          mkdir generated
+          mkdir target
+          mkdir bidrag-dev
+          mkdir bidrag-dev/docs
+          mkdir bidrag-dev/docs/generated
+          mkdir bidrag-dev/docs/latest
+
+          echo "a generated file" > ${RUNNER_WORKSPACE}/generated/file.a
+          echo "another generated file" > ${RUNNER_WORKSPACE}/generated/file.b
+          echo "{cuke.json}" > ${RUNNER_WORKSPACE}/target/cucumber.json
+
+          kotlinc -jvm-target 11 -script ${RUNNER_WORKSPACE}/bidrag-scripts/src/kotlin/copyCucumberReport.kts \
+              copyFrom=generated \
+              project=bidrag-dev \
+              cucumberJson=target/cucumber.json
+      - run: cd ${RUNNER_WORKSPACE}/bidrag-dev/docs/latest && find .
+      - run: cd ../generated && find .
+      - run: cd ${RUNNER_WORKSPACE} && find . -name bidrag-dev.json
+      - run: cat ${RUNNER_WORKSPACE}/bidrag-dev.json
+
+  delete_workspace:
+    name: delete workspace files
+    runs-on: self-hosted
+    needs: test_copyCucumberReport
+    if: ${{ always() }}
+
+    steps:
       - name: Remove files from workspace
         run: |
           cd $RUNNER_WORKSPACE
