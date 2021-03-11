@@ -32,38 +32,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  test_generateCucumberShell:
-    name: test generateCucumberShell.kts
-    runs-on: self-hosted
-    needs: build
-
-    steps:
-      - uses: navikt/bidrag-scripts/generate-with-kotlin@main
-        id: generator
-        with:
-          delimiter: "%"
-          delimited_arguments: "true%test%bruker%json/in.json%execute-cucumber.sh%tag=bidrag-dokument%opt.goal=another-mvn-command"
-          generator: generateCucumberShell.kts
-          generated_shell: execute-cucumber.sh
-      - run: cat ${{ steps.generator.outputs.path_to_generated_shell }}
-      - run: |
-          SHELL_FILE=${{ steps.generator.outputs.path_to_generated_shell }}
-
-          if test -f "$SHELL_FILE"; then
-            cat $SHELL_FILE
-          else
-            exit 1
-          fi
-      - name: Remove files from workspace
-        run: |
-          cd $RUNNER_WORKSPACE
-          echo deleting files
-          ls -al
-          sudo rm -rf *
-        if: ${{ always() }}
-
   test_createCucumberShell:
-    name: test createCucumberShell.kts
+    name: test createCucumberShell.kts (via action)
     runs-on: self-hosted
     needs: build
 
@@ -81,6 +51,39 @@ jobs:
           else
             exit 1
           fi
+
+  test_copyCucumberReport:
+    name: test copyCucumberReport.kts
+    runs-on: self-hosted
+    needs: test_createCucumberShell
+
+    steps:
+      - run: |
+          mkdir generated
+          mkdir target
+          mkdir bidrag-dev
+          mkdir bidrag-dev/docs
+          mkdir bidrag-dev/docs/latest
+
+          echo "a generated file" > generated/file.a
+          echo "another generated file" > generated/file.b
+          echo "{cuke.json}" > target/cucumber.json
+
+          kotlinc -jvm-target 11 -script ${RUNNER_WORKSPACE}/bidrag-scripts/src/kotlin/copyCucumberReport.kts \
+              copyFrom=generated \
+              project=bidrag-dev \
+              cucumberJson=temp/target/cucumber.json
+      - run: cd bidrag-dev/docs/latest && find .
+      - run: cd ../generated && find .
+      - run: cat ${RUNNER_WORKSPACE}/bidrag-dev-json
+
+  delete_workspace:
+    name: delete workspace files
+    runs-on: self-hosted
+    needs: test_copyCucumberReport
+    if: ${{ always() }}
+
+    steps:
       - name: Remove files from workspace
         run: |
           cd $RUNNER_WORKSPACE
