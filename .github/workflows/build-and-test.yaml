@@ -18,10 +18,6 @@ jobs:
         uses: navikt/bidrag-node/build-with-ncc@v1
         with:
           artifact_folder: bidrag-scripts/create-cucumber-shell
-      - name: Install generate-with-kotlin
-        uses: navikt/bidrag-node/build-with-ncc@v1
-        with:
-          artifact_folder: bidrag-scripts/generate-with-kotlin
       - name: Generate timestamp
         id: now
         run: echo ::set-output name=timestamp::$(date +"%Y-%m-%d:%T")
@@ -58,24 +54,28 @@ jobs:
     needs: test_createCucumberShell
 
     steps:
-      - run: |
+      - name: create expectations and run script
+        run: |
+          cd ${RUNNER_WORKSPACE}
           mkdir generated
           mkdir target
           mkdir bidrag-dev
           mkdir bidrag-dev/docs
+          mkdir bidrag-dev/docs/generated
           mkdir bidrag-dev/docs/latest
 
-          echo "a generated file" > generated/file.a
-          echo "another generated file" > generated/file.b
-          echo "{cuke.json}" > target/cucumber.json
+          echo "a generated file" > ${RUNNER_WORKSPACE}/generated/file.a
+          echo "another generated file" > ${RUNNER_WORKSPACE}/generated/file.b
+          echo "{cuke.json}" > ${RUNNER_WORKSPACE}/target/cucumber.json
 
           kotlinc -jvm-target 11 -script ${RUNNER_WORKSPACE}/bidrag-scripts/src/kotlin/copyCucumberReport.kts \
               copyFrom=generated \
               project=bidrag-dev \
-              cucumberJson=temp/target/cucumber.json
-      - run: cd bidrag-dev/docs/latest && find .
+              cucumberJson=target/cucumber.json
+      - run: cd ${RUNNER_WORKSPACE}/bidrag-dev/docs/latest && find .
       - run: cd ../generated && find .
-      - run: cat ${RUNNER_WORKSPACE}/bidrag-dev-json
+      - run: cd ${RUNNER_WORKSPACE} && find . -name bidrag-dev.json
+      - run: cat ${RUNNER_WORKSPACE}/bidrag-dev.json
 
   delete_workspace:
     name: delete workspace files
