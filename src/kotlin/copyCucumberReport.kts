@@ -77,7 +77,7 @@ if (File(fullPathToGeneratedDestinationFolder).exists()) {
 println("Kopierer $fullPathToDocsLatest/* til $fullPathToGeneratedDestinationFolder/.")
 copyFiles(fullPathToDocsLatest, fullPathToGeneratedDestinationFolder)
 
-val fullPathToBidragDevJson = "$fullPathToRunnerWorkspace/bidrag-dev.json"
+val fullPathToBidragDevJson = "$fullPathToDocsLatest/bidrag-dev.json"
 val bidragDevJson = """{"timestamp":"$now","foldername":"${File(fullPathToGeneratedDestinationFolder).name}"}\n"""
 
 println("Lagrer resultatet fra dette skriptet i $fullPathToBidragDevJson")
