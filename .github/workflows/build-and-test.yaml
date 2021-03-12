@@ -74,8 +74,7 @@ jobs:
               cucumberJson=target/cucumber.json
       - run: cd ${RUNNER_WORKSPACE}/bidrag-dev/docs/latest && find .
       - run: cd ../generated && find .
-      - run: cd ${RUNNER_WORKSPACE} && find . -name bidrag-dev.json
-      - run: cat ${RUNNER_WORKSPACE}/bidrag-dev.json
+      - run: cat ${RUNNER_WORKSPACE}/bidrag-dev/docs/latest/bidrag-dev.json
 
   delete_workspace:
     name: delete workspace files
