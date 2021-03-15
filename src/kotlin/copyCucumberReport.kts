@@ -78,7 +78,8 @@ println("Kopierer $fullPathToDocsLatest/* til $fullPathToGeneratedDestinationFol
 copyFiles(fullPathToDocsLatest, fullPathToGeneratedDestinationFolder)
 
 val fullPathToBidragDevJson = "$fullPathToDocsLatest/bidrag-dev.json"
-val bidragDevJson = """{"timestamp":"$now","foldername":"${File(fullPathToGeneratedDestinationFolder).name}"}\n"""
+val bidragDevJson = """{"timestamp":"$now","foldername":"${File(fullPathToGeneratedDestinationFolder).name}"}
+"""
 
 println("Lagrer resultatet fra dette skriptet i $fullPathToBidragDevJson")
 val printWriter = PrintWriter(FileWriter(fullPathToBidragDevJson))
