@@ -34,7 +34,7 @@ jobs:
     needs: build
 
     steps:
-      - uses: navikt/bidrag-scripts/create-cucumber-shell@main
+      - uses: navikt/bidrag-scripts/create-cucumber-shell@feature/args
         id: creator
         with:
           cucumber_tag: bidrag-dokument
@@ -48,10 +48,31 @@ jobs:
             exit 1
           fi
 
+  test_createCucumberShell_without_user:
+    name: test createCucumberShell.kts (via action) without user
+    runs-on: self-hosted
+    needs: build
+
+    steps:
+      - uses: navikt/bidrag-scripts/create-cucumber-shell@feature/args
+        id: creator
+        with:
+          cucumber_tag: bidrag-dokument
+      - run: |
+          SHELL_FILE=${{ steps.creator.outputs.created_shell }}
+
+          if test -f "$SHELL_FILE"; then
+            cat $SHELL_FILE
+          else
+            exit 1
+          fi
+
   test_copyCucumberReport:
     name: test copyCucumberReport.kts
     runs-on: self-hosted
-    needs: test_createCucumberShell
+    needs:
+      - test_createCucumberShell
+      - test_createCucumberShell_without_user
 
     steps:
       - name: create expectations and run script

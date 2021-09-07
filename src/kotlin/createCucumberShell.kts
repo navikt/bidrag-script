@@ -32,10 +32,6 @@ val optional_maven_goal = "optional_maven_goal"
 var relative_json_path = "relative_json_path"
 val user = "user"
 
-if (commands.size < 6) {
-    throw exception("Example of expected arguments are")
-}
-
 println("Using arguments: $allArgs")
 
 val cucumberGithubProcect = commands[cucumber_github_project] ?: throw exception("Missing required argument: $cucumber_github_project!")
@@ -43,7 +39,7 @@ val cucumberShellName = commands[final_shell_file] ?: throw exception("Missing r
 val suppressFailures = commands[do_not_fail]?.toBoolean() ?: throw exception("Missing required argument: $do_not_fail, args $allArgs")
 val jsonPath = commands[relative_json_path] ?: throw exception("Missing required argument: $relative_json_path, args: $allArgs")
 val runMavenGoal = commands[maven_goal] ?: throw exception("Missing required argument: $maven_goal, args: $allArgs")
-val userName = commands[user] ?: throw exception("Missing required argument: $user, args: $allArgs")
+val userName = commands[user] ?: println("No user found among the arguments")
 
 val cucumberTags = if (commands.containsKey(cucumber_tag)) {
     "@${commands[cucumber_tag]} and not @ignored"
@@ -86,13 +82,13 @@ fun fetchErrorMsg(detailedArgumentMsg: String) = """
            ERROR!
            $detailedArgumentMsg
               - $cucumber_github_project=<name of project>     : the name of the github project where the cucumber tests to run
-              - $cucumber_tag=<cucumber tag> (optional)        : cucumber tag to run with "along with not @ignore", (will default to "not @ignored")>,
+              - $cucumber_tag=<cucumber tag> (optional)        : cucumber tag to run along with "not @ignored", (will default to "not @ignored")>,
               - $do_not_fail=true/false                        : if failure in the integration tests, produce build error, ex [true] or [false] if not
               - $final_shell_file=execute-cucumber.sh          : the name of the file to produce, ex [execute-cucumber.sh]
               - $maven_goal=test                               : the maven goal to run, ex [test]
               - $optional_maven_goal=<goal> (optional)         : an optional goal to perform after running the cucumber tests
               - $relative_json_path=json/integrationInput.json : the relative path to input json file, ex [json/integrationInput.json]
-              - $user=j104364                                  : the nav user running the integration tests, ex [j104364]
+              - $user=<username> (optional)                    : the nav user running the integration tests, ex [j104364]
               ---------
               -  args: $allArgs
               ---------

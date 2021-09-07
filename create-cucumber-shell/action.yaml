@@ -39,7 +39,7 @@ inputs:
     default: json/integrationInput.json
   user:
     description: user name of nav user running the cucumber tests
-    required: true
+    required: false
 outputs:
   created_shell:
     description: the filepath to the created shell
