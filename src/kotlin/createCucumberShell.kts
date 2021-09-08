@@ -39,7 +39,7 @@ val cucumberShellName = commands[final_shell_file] ?: throw exception("Missing r
 val suppressFailures = commands[do_not_fail]?.toBoolean() ?: throw exception("Missing required argument: $do_not_fail, args $allArgs")
 val jsonPath = commands[relative_json_path] ?: throw exception("Missing required argument: $relative_json_path, args: $allArgs")
 val runMavenGoal = commands[maven_goal] ?: throw exception("Missing required argument: $maven_goal, args: $allArgs")
-val userName = commands[user] ?: println("No user found among the arguments")
+val userName = commands[user]
 
 val cucumberTags = if (commands.containsKey(cucumber_tag)) {
     "@${commands[cucumber_tag]} and not @ignored"
@@ -55,7 +55,7 @@ val skipMavenFailures = if (suppressFailures) {
 }
 
 val envCucumberFilterTags = "export CUCUMBER_FILTER_TAGS=\"$cucumberTags\""
-val mavenArguments = "-e -DUSERNAME=$userName -DINTEGRATION_INPUT=$jsonPath$skipMavenFailures"
+val mavenArguments = "-e ${addUserName(userName)} -DINTEGRATION_INPUT=$jsonPath$skipMavenFailures"
 val authentication = "-DUSER_AUTH=\$USER_AUTHENTICATION -DTEST_AUTH=\$TEST_USER_AUTHENTICATION -DPIP_AUTH=\$PIP_USER_AUTHENTICATION"
 val optionalMvnGoal = if (commands.containsKey(optional_maven_goal)) {
     "mvn ${commands[optional_maven_goal]}"
@@ -93,3 +93,11 @@ fun fetchErrorMsg(detailedArgumentMsg: String) = """
               -  args: $allArgs
               ---------
         """.trimIndent()
+
+fun addUserName(userName: String?): String {
+    if (userName == null) {
+        return ""
+    }
+
+    return "-DUSERNAME=$userName"
+}
