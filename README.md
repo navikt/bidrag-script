@@ -1,6 +1,8 @@
 # bidrag-script
 
 ![build and test](https://github.com/navikt/bidrag-scripts/workflows/build%20and%20test/badge.svg)
+Dette prosjektet har utelukkende blitt brukt for å kjøre mot bidrag-cucumber-backend. Dette prosjektet er nå arkivert
+og dette prosjektet er også arkivert.
 
 scripts used in development by team bidrag and a bash script generator written as kotlin script
 
